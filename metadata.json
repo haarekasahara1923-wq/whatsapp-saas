@@ -1,0 +1,7 @@
+{
+  "name": "WhatsApp Store SaaS",
+  "description": "Create and manage your digital storefront connected directly to WhatsApp.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
