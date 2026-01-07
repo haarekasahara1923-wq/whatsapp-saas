@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockDb } from '../services/mockDb';
 import { Store, Product, StoreTemplate, ProductVariant, SocialLinks } from '../types';
-import { STORE_TEMPLATES } from '../constants';
+import { STORE_TEMPLATES, SOCIAL_PLATFORMS } from '../constants';
 import { Facebook, Instagram, Youtube, Twitter, MessageCircle } from 'lucide-react';
 
 const PublicStore: React.FC = () => {
@@ -214,27 +214,23 @@ const PublicStore: React.FC = () => {
       {/* FOOTER */}
       <footer className="text-center py-20 border-t border-gray-50 text-gray-400">
         {store.settings.socialLinks && (
-          <div className="flex justify-center space-x-6 mb-8">
-            {store.settings.socialLinks.instagram && (
-              <a href={store.settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-[#E1306C] hover:opacity-80 transition-opacity transform hover:scale-110">
-                <Instagram className="w-7 h-7" />
-              </a>
-            )}
-            {store.settings.socialLinks.facebook && (
-              <a href={store.settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-[#1877F2] hover:opacity-80 transition-opacity transform hover:scale-110">
-                <Facebook className="w-7 h-7" />
-              </a>
-            )}
-            {store.settings.socialLinks.youtube && (
-              <a href={store.settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-[#FF0000] hover:opacity-80 transition-opacity transform hover:scale-110">
-                <Youtube className="w-7 h-7" />
-              </a>
-            )}
-            {store.settings.socialLinks.x && (
-              <a href={store.settings.socialLinks.x} target="_blank" rel="noopener noreferrer" className="text-black hover:opacity-80 transition-opacity transform hover:scale-110">
-                <Twitter className="w-7 h-7" />
-              </a>
-            )}
+          <div className="flex justify-center space-x-6 mb-8 flex-wrap gap-y-4">
+            {SOCIAL_PLATFORMS.map(p => {
+              const link = (store.settings.socialLinks as any)?.[p.id];
+              if (!link) return null;
+              return (
+                <a
+                  key={p.id}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity transform hover:scale-110"
+                  style={{ color: p.color !== '#000000' && p.color !== '#fff' ? p.color : 'currentColor' }}
+                >
+                  {p.icon}
+                </a>
+              );
+            })}
           </div>
         )}
         <p className="text-[10px] font-black uppercase tracking-[0.2em]">{mockDb.getUsers().find(u => u.id === store.userId)?.storeName} &copy; 2025</p>
@@ -313,8 +309,17 @@ const PublicStore: React.FC = () => {
                   const variantDetails = (Object.entries(selectedVariants) as [string, ProductVariant][])
                     .map(([type, v]) => `${type}: ${v.value}`)
                     .join(', ');
-                  const message = `Order Request:\n\n*Product:* ${selectedProduct.name}\n${variantDetails ? `*Options:* ${variantDetails}\n` : ''}*Price:* ₹${calculateTotalPrice(selectedProduct)}`;
-                  window.open(`https://wa.me/${store.settings.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank')
+
+                  // Constructing the personalized message as requested
+                  const price = calculateTotalPrice(selectedProduct);
+                  const message = `I am interested in ${selectedProduct.name} (Price: ₹${price})${variantDetails ? ` with options: ${variantDetails}` : ''}. Please provide me more details.`;
+
+                  const phoneNumber = store.settings.whatsappNumber.replace(/\D/g, '');
+                  if (phoneNumber) {
+                    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+                  } else {
+                    alert('This store has not configured a WhatsApp number yet.');
+                  }
                 }}
                 className="w-full text-white py-5 rounded-2xl font-black text-lg shadow-2xl transition-all flex items-center justify-center space-x-3 active:scale-95 mt-4"
                 style={{ backgroundColor: config.primaryColor }}
