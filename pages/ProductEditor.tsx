@@ -10,12 +10,12 @@ const ProductEditor: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = mockDb.getCurrentUser();
-  
+
   const [loadingAi, setLoadingAi] = useState(false);
   const [editingImageIdx, setEditingImageIdx] = useState<number | null>(null);
   const [editPrompt, setEditPrompt] = useState('');
   const [isProcessingImage, setIsProcessingImage] = useState(false);
-  
+
   const [formData, setFormData] = useState<Partial<Product>>({
     name: '',
     description: '',
@@ -81,7 +81,7 @@ const ProductEditor: React.FC = () => {
     setIsProcessingImage(true);
     const originalImage = formData.images![editingImageIdx];
     const editedImage = await editProductImage(originalImage, editPrompt);
-    
+
     if (editedImage) {
       const newImages = [...formData.images!];
       newImages[editingImageIdx] = editedImage;
@@ -140,7 +140,7 @@ const ProductEditor: React.FC = () => {
       variants: formData.variants || [],
       createdAt: new Date().toISOString()
     };
-    
+
     mockDb.saveProduct(product);
     navigate('/dashboard');
   };
@@ -156,7 +156,7 @@ const ProductEditor: React.FC = () => {
           Back
         </button>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-8">
           <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
@@ -166,13 +166,13 @@ const ProductEditor: React.FC = () => {
                 <div key={idx} className="space-y-2">
                   <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 relative group border border-gray-200 shadow-sm">
                     <img src={img} className="w-full h-full object-cover" />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => setFormData(prev => ({ ...prev, images: prev.images?.filter((_, i) => i !== idx) }))}
                       className="absolute top-3 right-3 bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     >✕</button>
                   </div>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setEditingImageIdx(idx)}
                     className="w-full bg-purple-50 text-purple-600 text-[10px] font-black uppercase py-2.5 rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors flex items-center justify-center"
@@ -202,11 +202,11 @@ const ProductEditor: React.FC = () => {
               ))}
               <div className="p-4 border border-green-100 bg-green-50/20 rounded-2xl space-y-3">
                 <div className="flex gap-2">
-                  <select className="flex-1 p-2 text-xs rounded-lg bg-white" value={newVariant.type} onChange={e => setNewVariant({...newVariant, type: e.target.value as any})}>
+                  <select className="flex-1 p-2 text-xs rounded-lg bg-white" value={newVariant.type} onChange={e => setNewVariant({ ...newVariant, type: e.target.value as any })}>
                     <option value="size">Size</option>
                     <option value="color">Color</option>
                   </select>
-                  <input placeholder="e.g. XL" className="flex-[2] p-2 text-xs rounded-lg bg-white" value={newVariant.value} onChange={e => setNewVariant({...newVariant, value: e.target.value})} />
+                  <input placeholder="e.g. XL" className="flex-[2] p-2 text-xs rounded-lg bg-white" value={newVariant.value} onChange={e => setNewVariant({ ...newVariant, value: e.target.value })} />
                 </div>
                 <button type="button" onClick={addVariant} className="w-full bg-green-600 text-white py-2.5 rounded-lg text-xs font-black uppercase">Add Variant</button>
               </div>
@@ -219,28 +219,38 @@ const ProductEditor: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-bold mb-2 text-gray-600">Product Name</label>
-                <input required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none focus:ring-2 focus:ring-green-500 font-bold text-xl" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                <input required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none focus:ring-2 focus:ring-green-500 font-bold text-xl" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-bold mb-2 text-gray-600">Original Price (₹)</label>
-                  <input type="number" required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none" value={formData.price || ''} onChange={e => setFormData({...formData, price: Number(e.target.value)})} />
+                  <input type="number" required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none" value={formData.price || ''} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
                 </div>
                 <div>
                   <label className="block text-sm font-bold mb-2 text-gray-600">Sale Price (₹)</label>
-                  <input type="number" className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none" value={formData.discountPrice || ''} onChange={e => setFormData({...formData, discountPrice: Number(e.target.value)})} />
+                  <input type="number" className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none" value={formData.discountPrice || ''} onChange={e => setFormData({ ...formData, discountPrice: Number(e.target.value) })} />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-bold text-gray-600">Description</label>
-                  <button type="button" onClick={handleOptimizeDescription} disabled={loadingAi} className="text-[10px] font-black uppercase bg-purple-50 text-purple-600 px-3 py-1 rounded-full border border-purple-100">
-                    {loadingAi ? 'Optimizing...' : '🪄 AI Power-Up'}
+                  <button
+                    type="button"
+                    onClick={handleOptimizeDescription}
+                    disabled={loadingAi}
+                    className={`text-[10px] font-black uppercase px-4 py-2 rounded-full border flex items-center shadow-sm transition-all ${loadingAi ? 'bg-gray-100 text-gray-400 border-gray-200' : 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200 hover:scale-105 cursor-pointer'}`}
+                  >
+                    {loadingAi ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-purple-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Creating Magic...
+                      </>
+                    ) : '✨ AI Enhance Description'}
                   </button>
                 </div>
-                <textarea rows={6} required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none leading-relaxed text-gray-700" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+                <textarea rows={6} required className="w-full p-4 bg-gray-50 rounded-xl border border-transparent outline-none leading-relaxed text-gray-700" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
               </div>
             </div>
 
@@ -259,7 +269,7 @@ const ProductEditor: React.FC = () => {
             <img src={formData.images![editingImageIdx]} className="w-full h-48 object-contain bg-gray-50 rounded-2xl shadow-sm" />
             <div className="space-y-4">
               <label className="text-xs font-black uppercase text-gray-400 tracking-widest">Describe the changes</label>
-              <textarea 
+              <textarea
                 className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-medium"
                 placeholder="Ex: Add a luxury studio background, apply a vintage filter, remove small details..."
                 value={editPrompt}

@@ -216,23 +216,23 @@ const PublicStore: React.FC = () => {
         {store.settings.socialLinks && (
           <div className="flex justify-center space-x-6 mb-8">
             {store.settings.socialLinks.instagram && (
-              <a href={store.settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#E1306C] transition-colors">
-                <Instagram className="w-6 h-6" />
+              <a href={store.settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-[#E1306C] hover:opacity-80 transition-opacity transform hover:scale-110">
+                <Instagram className="w-7 h-7" />
               </a>
             )}
             {store.settings.socialLinks.facebook && (
-              <a href={store.settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-[#1877F2] transition-colors">
-                <Facebook className="w-6 h-6" />
+              <a href={store.settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-[#1877F2] hover:opacity-80 transition-opacity transform hover:scale-110">
+                <Facebook className="w-7 h-7" />
               </a>
             )}
             {store.settings.socialLinks.youtube && (
-              <a href={store.settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF0000] transition-colors">
-                <Youtube className="w-6 h-6" />
+              <a href={store.settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="text-[#FF0000] hover:opacity-80 transition-opacity transform hover:scale-110">
+                <Youtube className="w-7 h-7" />
               </a>
             )}
             {store.settings.socialLinks.x && (
-              <a href={store.settings.socialLinks.x} target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors">
-                <Twitter className="w-6 h-6" />
+              <a href={store.settings.socialLinks.x} target="_blank" rel="noopener noreferrer" className="text-black hover:opacity-80 transition-opacity transform hover:scale-110">
+                <Twitter className="w-7 h-7" />
               </a>
             )}
           </div>

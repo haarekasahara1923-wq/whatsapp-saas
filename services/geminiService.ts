@@ -1,8 +1,15 @@
-
+/// <reference types="vite/client" />
 import { GoogleGenAI } from "@google/genai";
 
 // Standard initialization
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Standard initialization
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY || '';
+  if (!apiKey) {
+    console.error("Gemini API Key is missing! Please set VITE_GEMINI_API_KEY in your .env file.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const generateProductDescription = async (productName: string, category: string): Promise<string> => {
   try {
