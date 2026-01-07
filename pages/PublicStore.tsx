@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { mockDb } from '../services/mockDb';
-import { Store, Product, StoreTemplate, ProductVariant } from '../types';
+import { Store, Product, StoreTemplate, ProductVariant, SocialLinks } from '../types';
 import { STORE_TEMPLATES } from '../constants';
+import { Facebook, Instagram, Youtube, Twitter, MessageCircle } from 'lucide-react';
 
 const PublicStore: React.FC = () => {
   const navigate = useNavigate();
@@ -19,9 +20,9 @@ const PublicStore: React.FC = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check if owner is viewing their own store
-  const currentUser = mockDb.getCurrentUser();
-  const isOwner = currentUser && currentUser.storeSlug === urlSlug;
+  // Check if owner is viewing (Removed Admin View button to prevent confusion as requested)
+  // const currentUser = mockDb.getCurrentUser();
+  // const isOwner = currentUser && currentUser.storeSlug === urlSlug;
 
   useEffect(() => {
     const requestedSlug = urlSlug?.toLowerCase().trim();
@@ -117,9 +118,7 @@ const PublicStore: React.FC = () => {
             </span>
           </div>
           <div className="flex items-center space-x-2">
-            {isOwner && (
-              <button onClick={() => navigate('/dashboard')} className="text-[10px] font-black uppercase text-gray-400 bg-gray-50 px-3 py-2 rounded-lg mr-2 hover:bg-gray-100 transition-all">Admin View</button>
-            )}
+            {/* Admin View Request Removed for Customer Privacy */}
             <a
               href={`https://wa.me/${store.settings.whatsappNumber.replace(/\D/g, '')}`}
               target="_blank"
@@ -214,6 +213,30 @@ const PublicStore: React.FC = () => {
 
       {/* FOOTER */}
       <footer className="text-center py-20 border-t border-gray-50 text-gray-400">
+        {store.settings.socialLinks && (
+          <div className="flex justify-center space-x-6 mb-8">
+            {store.settings.socialLinks.instagram && (
+              <a href={store.settings.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[#E1306C] transition-colors">
+                <Instagram className="w-6 h-6" />
+              </a>
+            )}
+            {store.settings.socialLinks.facebook && (
+              <a href={store.settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-[#1877F2] transition-colors">
+                <Facebook className="w-6 h-6" />
+              </a>
+            )}
+            {store.settings.socialLinks.youtube && (
+              <a href={store.settings.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-[#FF0000] transition-colors">
+                <Youtube className="w-6 h-6" />
+              </a>
+            )}
+            {store.settings.socialLinks.x && (
+              <a href={store.settings.socialLinks.x} target="_blank" rel="noopener noreferrer" className="hover:text-black transition-colors">
+                <Twitter className="w-6 h-6" />
+              </a>
+            )}
+          </div>
+        )}
         <p className="text-[10px] font-black uppercase tracking-[0.2em]">{mockDb.getUsers().find(u => u.id === store.userId)?.storeName} &copy; 2025</p>
       </footer>
 
@@ -224,8 +247,22 @@ const PublicStore: React.FC = () => {
           <div className={`relative bg-white w-full max-w-5xl md:max-h-[90vh] overflow-y-auto rounded-t-3xl md:${config.borderRadius} shadow-2xl flex flex-col md:flex-row animate-in slide-in-from-bottom-20 duration-500`}>
             <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 z-[110] bg-white/80 backdrop-blur-md text-gray-900 w-10 h-10 rounded-full flex items-center justify-center shadow-lg font-black">✕</button>
 
-            <div className="md:w-1/2 bg-gray-50 p-6 flex items-center justify-center min-h-[350px]">
-              <img src={selectedProduct.images[activeImageIdx]} className="max-w-full max-h-[500px] object-contain drop-shadow-xl" alt={selectedProduct.name} />
+            <div className="md:w-1/2 bg-gray-50 p-6 flex flex-col items-center justify-center min-h-[350px]">
+              <img src={selectedProduct.images[activeImageIdx]} className="max-w-full max-h-[400px] object-contain drop-shadow-xl mb-6" alt={selectedProduct.name} />
+              {/* Image Carousel Thumbnails */}
+              {selectedProduct.images.length > 1 && (
+                <div className="flex space-x-2 overflow-x-auto p-2 scrollbar-hide max-w-full">
+                  {selectedProduct.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImageIdx(idx)}
+                      className={`w-14 h-14 rounded-lg border-2 overflow-hidden transition-all ${activeImageIdx === idx ? 'border-gray-900 ring-2 ring-gray-200' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                    >
+                      <img src={img} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="md:w-1/2 p-8 lg:p-12 bg-white flex flex-col">
@@ -250,8 +287,8 @@ const PublicStore: React.FC = () => {
                                   key={variant.id}
                                   onClick={() => handleVariantToggle(variant)}
                                   className={`px-4 py-2.5 rounded-xl text-[10px] font-black transition-all border-2 ${selectedVariants[type]?.id === variant.id
-                                      ? 'border-transparent text-white'
-                                      : 'border-gray-50 text-gray-500 hover:border-gray-200'
+                                    ? 'border-transparent text-white'
+                                    : 'border-gray-50 text-gray-500 hover:border-gray-200'
                                     }`}
                                   style={{ backgroundColor: selectedVariants[type]?.id === variant.id ? config.primaryColor : undefined }}
                                 >

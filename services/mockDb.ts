@@ -74,32 +74,55 @@ export const mockDb = {
 
   // New Async method for Public Store viewing to fetch from Cloud
   fetchStoreBySlug: async (slug: string): Promise<{ store: Store, user: User, products: Product[] } | null> => {
+    const targetSlug = slug.toLowerCase().trim();
+    console.log(`[MockDB] Fetching store for slug: ${targetSlug}`);
+
     // 1. Try Local first (fastest)
     const localUsers = mockDb.getUsers();
-    const localUser = localUsers.find(u => u.storeSlug?.toLowerCase() === slug.toLowerCase());
+    const localUser = localUsers.find(u => u.storeSlug?.toLowerCase() === targetSlug);
 
     if (localUser) {
+      console.log('[MockDB] Found user locally:', localUser.storeName);
       const localStore = mockDb.getStores().find(s => s.userId === localUser.id);
       if (localStore) {
+        console.log('[MockDB] Found store locally');
         const localProducts = mockDb.getProducts().filter(p => p.storeId === localStore.id);
         return { store: localStore, user: localUser, products: localProducts };
       }
+    } else {
+      console.log('[MockDB] User not found locally, trying cloud...');
     }
 
     // 2. Try Cloud (Supabase)
     if (supabase) {
-      const { data: userData } = await supabase.from('users').select('*').eq('store_slug', slug).single();
-      if (userData) {
-        const { data: storeData } = await supabase.from('stores').select('*').eq('user_id', userData.id).single();
-        if (storeData) {
-          const { data: productsData } = await supabase.from('products').select('*').eq('store_id', storeData.id);
-          return {
-            store: storeData as Store,
-            user: userData as User,
-            products: (productsData || []) as Product[]
-          };
+      try {
+        const { data: userData, error: userError } = await supabase.from('users').select('*').eq('store_slug', targetSlug).single();
+
+        if (userError || !userData) {
+          console.error('[MockDB] Supabase User Fetch Error:', userError);
+          return null;
         }
+
+        const { data: storeData, error: storeError } = await supabase.from('stores').select('*').eq('user_id', userData.id).single();
+
+        if (storeError || !storeData) {
+          console.error('[MockDB] Supabase Store Fetch Error:', storeError);
+          return null;
+        }
+
+        const { data: productsData } = await supabase.from('products').select('*').eq('store_id', storeData.id);
+
+        return {
+          store: storeData as Store,
+          user: userData as User,
+          products: (productsData || []) as Product[]
+        };
+      } catch (err) {
+        console.error('[MockDB] Critical Supabase Error:', err);
+        return null;
       }
+    } else {
+      console.warn('[MockDB] Supabase is not initialized. Cannot fetch from cloud.');
     }
 
     return null;
