@@ -1,51 +1,48 @@
 /// <reference types="vite/client" />
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from 'openai';
 
-// Standard initialization
-// Standard initialization
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY || '';
+const getOpenAI = () => {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   if (!apiKey) {
-    console.error("Gemini API Key is missing! Please set VITE_GEMINI_API_KEY in your .env file.");
-    alert("API Key missing. AI features will not work.");
+    console.error("OpenAI API Key is missing! Please set VITE_OPENAI_API_KEY in your .env file.");
+    // Fallback logic could be added here if needed
   }
-  return new GoogleGenAI({ apiKey });
+  return new OpenAI({
+    apiKey: apiKey,
+    dangerouslyAllowBrowser: true // Enabling client-side usage as per SaaS structure
+  });
 };
 
 export const generateProductDescription = async (productName: string, category: string): Promise<string> => {
   try {
-    const ai = getAI();
-    const response: any = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [
+    const openai = getOpenAI();
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a professional e-commerce copywriter." },
         {
-          role: 'user',
-          parts: [{ text: `Generate a short, catchy, and professional product description for a ${category} item named "${productName}". Keep it under 150 characters suitable for a WhatsApp store.` }]
+          role: "user",
+          content: `Generate a short, catchy, and professional product description for a ${category} item named "${productName}". Keep it under 150 characters suitable for a WhatsApp store.`
         }
       ],
+      model: "gpt-4o",
     });
 
-    // Using explicit any cast to handle the response safely across SDK versions
-    if (typeof response.text === 'function') {
-      return response.text();
-    }
-    return response.text || "No description generated.";
+    return completion.choices[0]?.message?.content || "No description generated.";
   } catch (error) {
-    console.error("Gemini Error:", error);
+    console.error("OpenAI Error:", error);
     return "Beautifully crafted product perfect for your needs.";
   }
 };
 
 export const optimizeProductCopy = async (name: string, currentDesc: string): Promise<string> => {
   try {
-    const ai = getAI();
-    const response: any = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [
+    const openai = getOpenAI();
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a professional e-commerce copywriter." },
         {
-          role: 'user',
-          parts: [{
-            text: `You are a professional e-commerce copywriter. Rewrite this product description to be persuasive, detailed, and sales-focused for a social media store. 
+          role: "user",
+          content: `Rewrite this product description to be persuasive, detailed, and sales-focused for a social media store. 
           
           Product Name: ${name}
           Current Description: ${currentDesc}
@@ -55,60 +52,72 @@ export const optimizeProductCopy = async (name: string, currentDesc: string): Pr
           - Highlight benefits clearly
           - Use emojis where appropriate
           - Keep it under 200 words
-          - Output ONLY the description text, no meta commentary.` }]
+          - Output ONLY the description text, no meta commentary.`
         }
       ],
+      model: "gpt-4o",
     });
 
-    if (typeof response.text === 'function') {
-      return response.text();
-    }
-    return response.text || currentDesc;
+    return completion.choices[0]?.message?.content || currentDesc;
   } catch (error) {
-    console.error("Gemini Optimization Error:", error);
+    console.error("OpenAI Optimization Error:", error);
     return currentDesc;
   }
 };
 
 export const editProductImage = async (base64Image: string, prompt: string): Promise<string | null> => {
   try {
-    // Note: Image editing might require a specific model or API capability not fully standard in basic 1.5 flash yet broadly. 
-    // Ensuring we try a multimodal capable model.
-    const ai = getAI();
+    const openai = getOpenAI();
 
-    console.warn("Gemini API (standard) does not support direct image editing generation via this SDK method usually. Returning null.");
+    // Note: True 'editing' (Inpainting) requires a mask. 
+    // DALL-E 3 generates new images from prompts.
+    // DALL-E 2 can edit but needs a mask.
+    // We will use DALL-E 3 to GENERATE a high-quality product image based on the user's description.
+    // This effectively "Re-imagines" the product.
+
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: `Product photography of ${prompt}. High quality, photorealistic, commercial lighting.`,
+      n: 1,
+      size: "1024x1024",
+      response_format: "b64_json"
+    });
+
+    if (response.data && response.data[0].b64_json) {
+      return `data:image/png;base64,${response.data[0].b64_json}`;
+    }
     return null;
+
   } catch (error) {
-    console.error("Image Edit Error:", error);
+    console.error("OpenAI Image Generation Error:", error);
     return null;
   }
 };
 
 export const generateStoreBio = async (storeName: string, category: string): Promise<string> => {
   try {
-    const ai = getAI();
-    const response: any = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
-      contents: [
+    const openai = getOpenAI();
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a professional brand strategist." },
         {
-          role: 'user',
-          parts: [{
-            text: `Create a professional and welcoming store bio for a WhatsApp store named "${storeName}" in the ${category} niche. 
+          role: "user",
+          content: `Create a professional and welcoming store bio for a WhatsApp store named "${storeName}" in the ${category} niche. 
           
           Requirements:
           - 2-3 sentences long (approx 40-50 words)
           - Mention quality, service, and easy ordering via WhatsApp
           - Use a friendly, trustworthy tone
-          - Include 1-2 relevant emojis` }]
+          - Include 1-2 relevant emojis
+          - Output ONLY the bio text.`
         }
       ],
+      model: "gpt-4o",
     });
-    if (typeof response.text === 'function') {
-      return response.text();
-    }
-    return response.text || "The best products delivered via WhatsApp.";
+
+    return completion.choices[0]?.message?.content || "The best products delivered via WhatsApp.";
   } catch (error) {
-    console.error("Gemini Bio Error:", error);
+    console.error("OpenAI Bio Error:", error);
     return "Quality products delivered to your doorstep via WhatsApp.";
   }
 };
