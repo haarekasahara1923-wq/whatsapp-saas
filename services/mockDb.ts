@@ -185,10 +185,10 @@ export const mockDb = {
     // 2. Try Cloud (Supabase)
     if (supabase) {
       try {
-        const { data: userData, error: userError } = await supabase.from('users').select('*').eq('store_slug', targetSlug).single();
+        const { data: userData, error: userError } = await supabase.from('users').select('*').ilike('store_slug', targetSlug).maybeSingle();
 
         if (userError || !userData) {
-          console.error('[MockDB] Supabase User Fetch Error:', userError);
+          console.error('[MockDB] Supabase User Fetch Error (or not found):', userError);
           return null;
         }
 

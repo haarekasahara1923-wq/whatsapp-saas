@@ -70,6 +70,15 @@ const PublicStore: React.FC = () => {
         <div className="text-8xl mb-6 grayscale opacity-20">🏪</div>
         <h2 className="text-3xl font-black mb-2 text-gray-900">Store Offline</h2>
         <p className="text-gray-500 mb-8 max-w-sm font-medium leading-relaxed">This store link is incorrect or the store is no longer active.</p>
+
+        {/* Debug Info */}
+        <div className="bg-gray-100 p-4 rounded-lg text-left text-xs text-gray-500 mb-6 w-full max-w-sm overflow-auto">
+          <p className="font-bold">Debug Info:</p>
+          <p>Slug: {urlSlug}</p>
+          <p>Time: {new Date().toLocaleTimeString()}</p>
+          <p>Status: Cloud Sync Attempted</p>
+        </div>
+
         <button onClick={() => navigate('/')} className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl">Return Home</button>
       </div>
     );
