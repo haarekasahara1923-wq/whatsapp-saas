@@ -2,7 +2,7 @@ export const getGeminiKey = (): string => {
     return localStorage.getItem('gemini_api_key') ||
         import.meta.env.VITE_GEMINI_API_KEY ||
         (process.env as any).GEMINI_API_KEY ||
-        "";
+        "AIzaSyAgJplgxK98GKyn7DbzHrJkpHHVt6nS23o";
 };
 
 export const getHuggingFaceKey = (): string => {
