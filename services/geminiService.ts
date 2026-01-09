@@ -2,23 +2,42 @@
 
 const generateText = async (prompt: string): Promise<string> => {
   try {
-    // Using Pollinations.ai Text API which provides free access to models like GPT-4o/Claude/Mistral
-    // It's robust and requires no API key.
-    // Endpoint: https://text.pollinations.ai/{prompt}?model=openai (or others)
+    // We append a strict system-level instruction to the prompt to force plain text.
+    const strictPrompt = `${prompt}\n\n[SYSTEM INSTRUCTION: Your goal is to write sales copy. Output ONLY the final sales copy in plain text. Do NOT output a JSON object. Do NOT output reasoning or thoughts. Do NOT begin with 'Here is'. Just the text.]`;
 
-    // We construct a seed to avoid caching if needed, though usually not strictly necessary for text
     const seed = Math.floor(Math.random() * 1000000);
 
-    // Explicitly requesting 'openai' model often gives better followed instructions
-    const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?seed=${seed}&model=openai`;
+    // Using 'openai' model often gives better followed instructions
+    const url = `https://text.pollinations.ai/${encodeURIComponent(strictPrompt)}?seed=${seed}&model=openai`;
 
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Pollinations API Error: ${response.statusText}`);
     }
 
-    const text = await response.text();
-    return text.trim();
+    let text = await response.text();
+    text = text.trim();
+
+    // Check if output is accidentally wrapped in JSON (common with some models despite instructions)
+    try {
+      if (text.startsWith('{') || text.startsWith('```json')) {
+        // Attempt to parse if it's JSON
+        const cleanJson = text.replace(/```json|```/g, '');
+        const parsed = JSON.parse(cleanJson);
+        // If it has a 'description' or 'content' field, use that. Otherwise, try to extract string values.
+        if (parsed.description) return parsed.description;
+        if (parsed.content) return parsed.content;
+      }
+    } catch (e) {
+      // Not JSON, just continue
+    }
+
+    // Cleanup known artifacts
+    text = text.replace(/^Here is (the|a) [a-zA-Z ]+[:,\.]/i, '').trim();
+    // Remove reasoning block if it appears in text (e.g. {"role":"assistant" ... })
+    text = text.replace(/{"role":"assistant".*?}/s, '').trim();
+
+    return text;
 
   } catch (error: any) {
     console.error("AI Text Gen Error:", error);
@@ -49,7 +68,7 @@ export const optimizeProductCopy = async (name: string, currentDesc: string): Pr
     const prompt = `Rewrite this product description to be highly persuasive and sales-focused for a WhatsApp store.
     Product: ${name}
     Current Description: ${currentDesc}
-
+    
     Requirements:
     - Target 150 words.
     - Use bullet points for features.
