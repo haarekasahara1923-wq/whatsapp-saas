@@ -18,30 +18,30 @@ const PublicStore: React.FC = () => {
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [selectedVariants, setSelectedVariants] = useState<Record<string, ProductVariant>>({});
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(true);
-
-  // Check if owner is viewing (Removed Admin View button to prevent confusion as requested)
-  // const currentUser = mockDb.getCurrentUser();
-  // const isOwner = currentUser && currentUser.storeSlug === urlSlug;
 
   useEffect(() => {
     const requestedSlug = urlSlug?.toLowerCase().trim();
     if (!requestedSlug) {
       setError(true);
+      setErrorMsg('No store link provided.');
       setLoading(false);
       return;
     }
 
     const fetchStoreData = async () => {
-      const data = await mockDb.fetchStoreBySlug(requestedSlug);
+      // @ts-ignore
+      const result = await mockDb.fetchStoreBySlug(requestedSlug);
 
-      if (data) {
-        setStore(data.store);
-        setProducts(data.products);
-        setTemplate(STORE_TEMPLATES.find(t => t.id === data.store.templateId));
+      if (result && result.data) {
+        setStore(result.data.store);
+        setProducts(result.data.products);
+        setTemplate(STORE_TEMPLATES.find(t => t.id === result.data.store.templateId));
         setError(false);
       } else {
         setError(true);
+        setErrorMsg(result?.error || 'Unknown Error');
       }
       setLoading(false);
     };
@@ -72,11 +72,11 @@ const PublicStore: React.FC = () => {
         <p className="text-gray-500 mb-8 max-w-sm font-medium leading-relaxed">This store link is incorrect or the store is no longer active.</p>
 
         {/* Debug Info */}
-        <div className="bg-gray-100 p-4 rounded-lg text-left text-xs text-gray-500 mb-6 w-full max-w-sm overflow-auto">
-          <p className="font-bold">Debug Info:</p>
+        <div className="bg-red-50 p-4 rounded-lg text-left text-xs text-red-800 mb-6 w-full max-w-sm break-all font-mono">
+          <p className="font-bold mb-1">Debug Details:</p>
           <p>Slug: {urlSlug}</p>
           <p>Time: {new Date().toLocaleTimeString()}</p>
-          <p>Status: Cloud Sync Attempted</p>
+          <p className="border-t border-red-200 mt-2 pt-2">{errorMsg || 'Store Not Found or Connection Failed'}</p>
         </div>
 
         <button onClick={() => navigate('/')} className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl">Return Home</button>

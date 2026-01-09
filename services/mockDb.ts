@@ -162,7 +162,7 @@ export const mockDb = {
   },
 
   // New Async method for Public Store viewing to fetch from Cloud
-  fetchStoreBySlug: async (slug: string): Promise<{ store: Store, user: User, products: Product[] } | null> => {
+  fetchStoreBySlug: async (slug: string): Promise<{ data: { store: Store, user: User, products: Product[] } | null, error?: string }> => {
     const targetSlug = slug.toLowerCase().trim();
     console.log(`[MockDB] Fetching store for slug: ${targetSlug}`);
 
@@ -176,7 +176,7 @@ export const mockDb = {
       if (localStore) {
         console.log('[MockDB] Found store locally');
         const localProducts = mockDb.getProducts().filter(p => p.storeId === localStore.id);
-        return { store: localStore, user: localUser, products: localProducts };
+        return { data: { store: localStore, user: localUser, products: localProducts } };
       }
     } else {
       console.log('[MockDB] User not found locally, trying cloud...');
@@ -185,36 +185,42 @@ export const mockDb = {
     // 2. Try Cloud (Supabase)
     if (supabase) {
       try {
+        // Test connection first
+        const { error: healthCheck } = await supabase.from('users').select('count', { count: 'exact', head: true });
+        if (healthCheck) {
+          return { data: null, error: `Database Error: ${healthCheck.message} (Hint: Tables might be missing or RLS blocked)` };
+        }
+
         const { data: userData, error: userError } = await supabase.from('users').select('*').ilike('store_slug', targetSlug).maybeSingle();
 
-        if (userError || !userData) {
-          console.error('[MockDB] Supabase User Fetch Error (or not found):', userError);
-          return null;
-        }
+        if (userError) return { data: null, error: `User Fetch Error: ${userError.message}` };
+        if (!userData) return { data: null, error: `Store with slug "${targetSlug}" not found in cloud DB.` };
 
         const { data: storeData, error: storeError } = await supabase.from('stores').select('*').eq('user_id', userData.id).single();
 
-        if (storeError || !storeData) {
-          console.error('[MockDB] Supabase Store Fetch Error:', storeError);
-          return null;
-        }
+        if (storeError) return { data: null, error: `Store Data Error: ${storeError.message}` };
+        if (!storeData) return { data: null, error: 'Store record missing for this user.' };
 
-        const { data: productsData } = await supabase.from('products').select('*').eq('store_id', storeData.id);
+        const { data: productsData, error: prodError } = await supabase.from('products').select('*').eq('store_id', storeData.id);
+        if (prodError) return { data: null, error: `Product Fetch Error: ${prodError.message}` };
 
         return {
-          store: mapStoreFromDb(storeData),
-          user: mapUserFromDb(userData),
-          products: (productsData || []).map(mapProductFromDb)
+          data: {
+            store: mapStoreFromDb(storeData),
+            user: mapUserFromDb(userData),
+            products: (productsData || []).map(mapProductFromDb)
+          }
         };
-      } catch (err) {
+      } catch (err: any) {
         console.error('[MockDB] Critical Supabase Error:', err);
-        return null;
+        return { data: null, error: `Unexpected Error: ${err.message || err}` };
       }
     } else {
       console.warn('[MockDB] Supabase is not initialized. Cannot fetch from cloud.');
+      return { data: null, error: 'Supabase not initialized (Missing Environment Variables)' };
     }
 
-    return null;
+    return { data: null, error: 'Unknown Error' };
   },
 
   updateStoreStatus: async (storeId: string, status: StoreStatus) => {
