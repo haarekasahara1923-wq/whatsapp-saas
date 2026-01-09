@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { mockDb } from '../services/mockDb';
 import { Store } from '../types';
 import { generateStoreBio } from '../services/geminiService';
+
 import { SOCIAL_PLATFORMS } from '../constants';
 
 
@@ -14,6 +15,8 @@ const StoreSettings: React.FC = () => {
   const [store, setStore] = useState<Store | undefined>();
   const [loadingAi, setLoadingAi] = useState(false);
   const [activeSocialField, setActiveSocialField] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     if (!user) {
@@ -50,6 +53,8 @@ const StoreSettings: React.FC = () => {
     setLoadingAi(false);
   };
 
+
+
   const saveChanges = () => {
     if (store) {
       mockDb.saveStore(store);
@@ -71,6 +76,9 @@ const StoreSettings: React.FC = () => {
       </div>
 
       <div className="space-y-8">
+
+
+
         <section className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm space-y-8">
           <h2 className="text-xl font-bold border-b pb-4">Branding</h2>
 

@@ -12,6 +12,13 @@ import StoreSettings from './pages/StoreSettings';
 import { Login, Register } from './pages/Auth';
 
 const App: React.FC = () => {
+  React.useEffect(() => {
+    // Hydrate local cache from Supabase on load
+    import('./services/mockDb').then(({ mockDb }) => {
+      mockDb.syncWithCloud();
+    });
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">

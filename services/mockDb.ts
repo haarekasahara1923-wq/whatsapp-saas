@@ -178,5 +178,46 @@ export const mockDb = {
     if (supabase) {
       await supabase.from('products').delete().eq('id', productId);
     }
+  },
+  syncWithCloud: async () => {
+    if (!supabase) return;
+    try {
+      console.log('[MockDB] Syncing with Cloud...');
+
+      // 1. Sync Users
+      const { data: users } = await supabase.from('users').select('*');
+      if (users) {
+        // Ensure Admin exists in the synced list
+        if (!users.find((u: any) => u.email === 'wsstore1923@gmail.com')) {
+          const adminUser = {
+            id: 'admin-primary',
+            name: 'Primary Admin',
+            email: 'wsstore1923@gmail.com',
+            password: 'Nami@1971',
+            whatsappNumber: '9999999999',
+            storeName: 'WS Admin Control',
+            address: 'System HQ',
+            role: UserRole.ADMIN,
+            createdAt: new Date().toISOString()
+          };
+          users.push(adminUser);
+          // Try to upsert Admin to Supabase so it persists for next time
+          await supabase.from('users').upsert(adminUser);
+        }
+        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+      }
+
+      // 2. Sync Stores
+      const { data: stores } = await supabase.from('stores').select('*');
+      if (stores) localStorage.setItem(DB_KEYS.STORES, JSON.stringify(stores));
+
+      // 3. Sync Products
+      const { data: products } = await supabase.from('products').select('*');
+      if (products) localStorage.setItem(DB_KEYS.PRODUCTS, JSON.stringify(products));
+
+      console.log('[MockDB] Sync Complete.');
+    } catch (e) {
+      console.error('[MockDB] Sync Failed:', e);
+    }
   }
 };
