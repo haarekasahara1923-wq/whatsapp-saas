@@ -72,12 +72,7 @@ const PublicStore: React.FC = () => {
         <p className="text-gray-500 mb-8 max-w-sm font-medium leading-relaxed">This store link is incorrect or the store is no longer active.</p>
 
         {/* Debug Info */}
-        <div className="bg-red-50 p-4 rounded-lg text-left text-xs text-red-800 mb-6 w-full max-w-sm break-all font-mono">
-          <p className="font-bold mb-1">Debug Details:</p>
-          <p>Slug: {urlSlug}</p>
-          <p>Time: {new Date().toLocaleTimeString()}</p>
-          <p className="border-t border-red-200 mt-2 pt-2">{errorMsg || 'Store Not Found or Connection Failed'}</p>
-        </div>
+
 
         <button onClick={() => navigate('/')} className="bg-green-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl">Return Home</button>
       </div>
