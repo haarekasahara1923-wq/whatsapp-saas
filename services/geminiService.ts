@@ -9,7 +9,8 @@ const generateText = async (prompt: string): Promise<string> => {
     // We construct a seed to avoid caching if needed, though usually not strictly necessary for text
     const seed = Math.floor(Math.random() * 1000000);
 
-    const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?seed=${seed}`;
+    // Explicitly requesting 'openai' model often gives better followed instructions
+    const url = `https://text.pollinations.ai/${encodeURIComponent(prompt)}?seed=${seed}&model=openai`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -27,13 +28,13 @@ const generateText = async (prompt: string): Promise<string> => {
 
 export const generateProductDescription = async (productName: string, category: string): Promise<string> => {
   try {
-    const prompt = `Write a professional, compelling, and sales-oriented product description for a ${category} item named "${productName}". 
+    const prompt = `Write a professional, compelling, and sales-oriented product description for a ${category} item named "${productName}".
     Requirements:
-    - Write about 100-150 words.
+    - Write about 100 words.
     - Highlight potential benefits and features.
-    - Use a professional yet persuasive tone.
+    - Use a simple, catchy business tone.
     - Make it ready for a WhatsApp store listing.
-    - Do not include any intro/outro text like "Here is a description", just the description itself.`;
+    - IMPORTANT: Output ONLY the raw description text. Do NOT output JSON. Do NOT output reasoning or thoughts. Do NOT include intro/outro.`;
 
     const text = await generateText(prompt);
     return text || "Error generating description. Please try again.";
@@ -48,14 +49,14 @@ export const optimizeProductCopy = async (name: string, currentDesc: string): Pr
     const prompt = `Rewrite this product description to be highly persuasive and sales-focused for a WhatsApp store.
     Product: ${name}
     Current Description: ${currentDesc}
-    
+
     Requirements:
-    - Expand to 150-200 words.
+    - Target 150 words.
     - Use bullet points for features.
     - Highlight benefits clearly.
     - Use attractive emojis.
     - Add a Call to Action "Order now on WhatsApp".
-    - Output ONLY the description text, no chatter.`;
+    - IMPORTANT: Output ONLY the raw description text. Do NOT output JSON. Do NOT output "Here is the description". Do NOT output reasoning.`;
 
     const text = await generateText(prompt);
     return text || currentDesc;
