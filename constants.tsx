@@ -86,6 +86,22 @@ export const STORE_TEMPLATES: StoreTemplate[] = [
     description: 'Dynamic, energetic high-contrast design.',
     thumbnail: 'https://picsum.photos/seed/sports/400/300',
     config: { fontFamily: 'font-sans', borderRadius: 'rounded-md', primaryColor: '#dc2626', layout: 'grid' }
+  },
+  {
+    id: 'organic-fresh',
+    name: 'Organic Grocery',
+    niche: 'Grocery',
+    description: 'Clean, green, and list-based design for fresh produce.',
+    thumbnail: 'https://picsum.photos/seed/grocery/400/300',
+    config: { fontFamily: 'font-sans', borderRadius: 'rounded-2xl', primaryColor: '#16a34a', layout: 'list' }
+  },
+  {
+    id: 'watch-luxury',
+    name: 'Luxury Watches',
+    niche: 'Accessories',
+    description: 'Dark mode inspired, premium design for timepieces.',
+    thumbnail: 'https://picsum.photos/seed/watch/400/300',
+    config: { fontFamily: 'font-serif', borderRadius: 'rounded-none', primaryColor: '#c0a062', layout: 'grid' }
   }
 ];
 

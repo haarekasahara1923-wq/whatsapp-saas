@@ -192,24 +192,73 @@ const PublicStore: React.FC = () => {
         </div>
       </div>
 
-      {/* PRODUCT GRID */}
-      <main className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+      {/* PRODUCT GRID / LIST */}
+      <main className={`max-w-7xl mx-auto px-4 py-12 ${config.layout === 'list'
+        ? 'space-y-6 max-w-3xl'
+        : 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8'
+        }`}>
         {filteredProducts.map(product => (
-          <div key={product.id} className="group cursor-pointer flex flex-col" onClick={() => setSelectedProduct(product)}>
-            <div className={`aspect-square md:aspect-[4/5] overflow-hidden ${config.borderRadius} bg-gray-50 relative shadow-sm transition-all duration-700 hover:shadow-2xl hover:-translate-y-1`}>
+          <div
+            key={product.id}
+            className={`group cursor-pointer ${config.layout === 'list'
+              ? 'flex items-center gap-5 bg-white p-3 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-transparent transition-all'
+              : 'flex flex-col'
+              }`}
+            onClick={() => setSelectedProduct(product)}
+            style={{
+              borderColor: config.layout === 'list' ? undefined : 'transparent'
+            }}
+          >
+            {/* Image Container */}
+            <div className={`overflow-hidden ${config.borderRadius} bg-gray-50 relative shadow-sm transition-all duration-700 
+              ${config.layout === 'list'
+                ? 'w-24 h-24 md:w-32 md:h-32 flex-shrink-0'
+                : 'aspect-square md:aspect-[4/5] hover:shadow-2xl hover:-translate-y-1'
+              }`}
+            >
               <img src={product.images[0]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
               {product.discountPrice && (
-                <div className="absolute top-3 left-3 bg-red-600 text-white text-[9px] font-black px-3 py-1 rounded-full shadow-lg tracking-widest">SALE</div>
+                <div className={`absolute top-2 left-2 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-lg tracking-widest ${config.layout === 'list' ? 'bg-red-500' : ''}`}>SALE</div>
               )}
             </div>
-            <div className="mt-4 text-center px-1">
-              <h3 className="text-xs md:text-sm font-black text-gray-900 line-clamp-1 uppercase tracking-tighter">{product.name}</h3>
-              <div className="flex items-center justify-center space-x-2 mt-1">
-                <p className="text-sm md:text-lg font-black" style={{ color: config.primaryColor }}>₹{product.discountPrice || product.price}</p>
+
+            {/* Content Container */}
+            <div className={`${config.layout === 'list' ? 'flex-1 min-w-0 py-1' : 'mt-4 text-center px-1'}`}>
+              <h3 className={`${config.layout === 'list' ? 'text-base font-bold mb-1' : 'text-xs md:text-sm font-black line-clamp-1 uppercase tracking-tighter'} text-gray-900`}>
+                {product.name}
+              </h3>
+
+              {/* List View Description */}
+              {config.layout === 'list' && (
+                <p className="text-xs text-gray-400 line-clamp-2 mb-2 pr-4 leading-relaxed hidden md:block">
+                  {product.description}
+                </p>
+              )}
+
+              <div className={`flex items-center ${config.layout === 'list' ? 'justify-start space-x-3' : 'justify-center space-x-2 mt-1'}`}>
+                <p className={`${config.layout === 'list' ? 'text-lg font-bold' : 'text-sm md:text-lg font-black'}`} style={{ color: config.primaryColor }}>
+                  ₹{product.discountPrice || product.price}
+                </p>
                 {product.discountPrice && (
                   <p className="text-[10px] text-gray-300 line-through font-bold">₹{product.price}</p>
                 )}
+
+                {/* List View Action Icon */}
+                {config.layout === 'list' && (
+                  <div className="ml-auto md:hidden text-gray-300">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                  </div>
+                )}
               </div>
+
+              {/* List View 'Add' Button (Visual only) */}
+              {config.layout === 'list' && (
+                <div className="hidden md:flex mt-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-gray-100 text-gray-500 group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                    View Details
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         ))}
