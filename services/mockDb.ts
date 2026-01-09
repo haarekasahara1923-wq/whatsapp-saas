@@ -9,6 +9,87 @@ const DB_KEYS = {
   CURRENT_USER: 'ws_current_user'
 };
 
+// --- Mappers for CamelCase (App) <-> SnakeCase (DB) ---
+
+const mapUserToDb = (u: User) => ({
+  id: u.id,
+  name: u.name,
+  email: u.email,
+  whatsapp_number: u.whatsappNumber,
+  store_name: u.storeName,
+  store_slug: u.storeSlug,
+  address: u.address,
+  role: u.role,
+  password: u.password,
+  created_at: u.createdAt
+});
+
+const mapUserFromDb = (u: any): User => ({
+  id: u.id,
+  name: u.name,
+  email: u.email,
+  whatsappNumber: u.whatsapp_number,
+  storeName: u.store_name,
+  storeSlug: u.store_slug || '',
+  address: u.address,
+  role: u.role as UserRole,
+  password: u.password,
+  createdAt: u.created_at
+});
+
+const mapStoreToDb = (s: Store) => ({
+  id: s.id,
+  user_id: s.userId,
+  template_id: s.templateId,
+  status: s.status,
+  subscription_type: s.subscriptionType,
+  expiry_date: s.expiryDate,
+  setup_paid: s.setupPaid,
+  settings: s.settings, // JSONB
+  created_at: new Date().toISOString() // stores table has created_at
+});
+
+const mapStoreFromDb = (s: any): Store => ({
+  id: s.id,
+  userId: s.user_id,
+  templateId: s.template_id,
+  status: s.status as StoreStatus,
+  subscriptionType: s.subscription_type as SubscriptionPlan,
+  expiryDate: s.expiry_date,
+  setupPaid: s.setup_paid,
+  settings: s.settings
+});
+
+const mapProductToDb = (p: Product) => ({
+  id: p.id,
+  store_id: p.storeId,
+  name: p.name,
+  description: p.description,
+  price: p.price,
+  discount_price: p.discountPrice,
+  images: p.images,
+  video_url: p.videoUrl,
+  category: p.category,
+  stock: p.stock,
+  variants: p.variants, // JSONB
+  created_at: p.createdAt
+});
+
+const mapProductFromDb = (p: any): Product => ({
+  id: p.id,
+  storeId: p.store_id,
+  name: p.name,
+  description: p.description,
+  price: p.price,
+  discountPrice: p.discount_price,
+  images: p.images || [],
+  videoUrl: p.video_url,
+  category: p.category,
+  stock: p.stock,
+  variants: p.variants || [],
+  createdAt: p.created_at
+});
+
 // Initialize Admin if not exists with provided credentials
 const ensureAdmin = () => {
   const users = JSON.parse(localStorage.getItem(DB_KEYS.USERS) || '[]');
@@ -36,12 +117,19 @@ export const mockDb = {
 
   saveUser: async (user: User) => {
     const users = mockDb.getUsers();
-    users.push(user);
+    // Check if updating existing or adding new
+    const idx = users.findIndex(u => u.id === user.id);
+    if (idx >= 0) {
+      users[idx] = user;
+    } else {
+      users.push(user);
+    }
     localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
 
     // Cloud Sync
     if (supabase) {
-      await supabase.from('users').upsert(user);
+      const dbUser = mapUserToDb(user);
+      await supabase.from('users').upsert(dbUser);
     }
   },
 
@@ -64,7 +152,8 @@ export const mockDb = {
 
     // Cloud Sync
     if (supabase) {
-      await supabase.from('stores').upsert(store);
+      const dbStore = mapStoreToDb(store);
+      await supabase.from('stores').upsert(dbStore);
     }
   },
 
@@ -113,9 +202,9 @@ export const mockDb = {
         const { data: productsData } = await supabase.from('products').select('*').eq('store_id', storeData.id);
 
         return {
-          store: storeData as Store,
-          user: userData as User,
-          products: (productsData || []) as Product[]
+          store: mapStoreFromDb(storeData),
+          user: mapUserFromDb(userData),
+          products: (productsData || []).map(mapProductFromDb)
         };
       } catch (err) {
         console.error('[MockDB] Critical Supabase Error:', err);
@@ -163,7 +252,8 @@ export const mockDb = {
 
     // Cloud Sync
     if (supabase) {
-      await supabase.from('products').upsert(product);
+      const dbProduct = mapProductToDb(product);
+      await supabase.from('products').upsert(dbProduct);
     }
   },
 
@@ -179,43 +269,64 @@ export const mockDb = {
       await supabase.from('products').delete().eq('id', productId);
     }
   },
+
   syncWithCloud: async () => {
     if (!supabase) return;
     try {
       console.log('[MockDB] Syncing with Cloud...');
 
-      // 1. Sync Users
-      const { data: users } = await supabase.from('users').select('*');
-      if (users) {
-        // Ensure Admin exists in the synced list
-        if (!users.find((u: any) => u.email === 'wsstore1923@gmail.com')) {
-          const adminUser = {
-            id: 'admin-primary',
-            name: 'Primary Admin',
-            email: 'wsstore1923@gmail.com',
-            password: 'Nami@1971',
-            whatsappNumber: '9999999999',
-            storeName: 'WS Admin Control',
-            address: 'System HQ',
-            role: UserRole.ADMIN,
-            createdAt: new Date().toISOString()
-          };
-          users.push(adminUser);
-          // Try to upsert Admin to Supabase so it persists for next time
-          await supabase.from('users').upsert(adminUser);
+      // 1. Check if Cloud is empty by checking Users count
+      const { count } = await supabase.from('users').select('*', { count: 'exact', head: true });
+      const isCloudEmpty = count === 0;
+
+      if (isCloudEmpty) {
+        // Push Local to Cloud
+        console.log('[MockDB] Cloud is empty. Pushing local data...');
+        const users = mockDb.getUsers();
+        for (const u of users) {
+          await supabase.from('users').upsert(mapUserToDb(u));
         }
-        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+
+        const stores = mockDb.getStores();
+        for (const s of stores) {
+          await supabase.from('stores').upsert(mapStoreToDb(s));
+        }
+
+        const products = mockDb.getProducts();
+        for (const p of products) {
+          await supabase.from('products').upsert(mapProductToDb(p));
+        }
+        console.log('[MockDB] Push Complete.');
+
+      } else {
+        // Pull Cloud to Local
+        console.log('[MockDB] Cloud has data. Pulling changes...');
+
+        const { data: users } = await supabase.from('users').select('*');
+        if (users) {
+          const mappedUsers = users.map(mapUserFromDb);
+          // Ensure Admin existence in local if forced
+          if (!mappedUsers.find(u => u.email === 'wsstore1923@gmail.com')) {
+            const localAdmin = mockDb.getUsers().find(u => u.email === 'wsstore1923@gmail.com');
+            if (localAdmin) mappedUsers.push(localAdmin);
+          }
+          localStorage.setItem(DB_KEYS.USERS, JSON.stringify(mappedUsers));
+        }
+
+        const { data: stores } = await supabase.from('stores').select('*');
+        if (stores) {
+          const mappedStores = stores.map(mapStoreFromDb);
+          localStorage.setItem(DB_KEYS.STORES, JSON.stringify(mappedStores));
+        }
+
+        const { data: products } = await supabase.from('products').select('*');
+        if (products) {
+          const mappedProducts = products.map(mapProductFromDb);
+          localStorage.setItem(DB_KEYS.PRODUCTS, JSON.stringify(mappedProducts));
+        }
+        console.log('[MockDB] Pull Complete.');
       }
 
-      // 2. Sync Stores
-      const { data: stores } = await supabase.from('stores').select('*');
-      if (stores) localStorage.setItem(DB_KEYS.STORES, JSON.stringify(stores));
-
-      // 3. Sync Products
-      const { data: products } = await supabase.from('products').select('*');
-      if (products) localStorage.setItem(DB_KEYS.PRODUCTS, JSON.stringify(products));
-
-      console.log('[MockDB] Sync Complete.');
     } catch (e) {
       console.error('[MockDB] Sync Failed:', e);
     }
