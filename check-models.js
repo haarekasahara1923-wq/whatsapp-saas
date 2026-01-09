@@ -1,5 +1,5 @@
 
-const API_KEY = "AIzaSyBwOUErffADQAS_zTzaaMKR_bFRtSgIF9o";
+const API_KEY = "AIzaSyAgJplgxK98GKyn7DbzHrJkpHHVt6nS23o";
 const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${API_KEY}`;
 
 async function check() {

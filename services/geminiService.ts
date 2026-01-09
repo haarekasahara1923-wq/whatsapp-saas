@@ -8,8 +8,8 @@ const getGeminiModel = () => {
   if (!apiKey) throw new Error("Gemini API Key is missing. Please add VITE_GEMINI_API_KEY in Vercel/Env variables.");
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Using 'gemini-1.5-flash' for better stability and compatibility
-  return genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  // Using 'gemini-pro' as a reliable fallback
+  return genAI.getGenerativeModel({ model: "gemini-pro" });
 };
 
 // Helper to handle Rate Limits (429) automatically
