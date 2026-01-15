@@ -334,13 +334,23 @@ const StoreSetupWizard: React.FC = () => {
             ) : (
               <div className="bg-gradient-to-br from-green-50 to-white p-10 rounded-3xl border-2 border-green-100 relative max-w-sm mx-auto shadow-xl">
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Starter Offer</span>
-                <h4 className="text-6xl font-black text-gray-900 mb-1">₹399</h4>
-                <p className="text-xs text-green-700 font-black uppercase tracking-widest mb-6 text-center">One-time Setup Fee</p>
+
+                {/* Highlighted Subscription Price */}
+                <h4 className="text-6xl font-black text-gray-900 mb-1">₹299</h4>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1 text-center">/ Month</p>
+                <p className="text-[10px] text-green-600 font-bold uppercase mb-6 text-center">(Starts 2nd Month)</p>
+
+                {/* Payable Amount Box */}
+                <div className="bg-green-100 p-4 rounded-2xl mb-6 border border-green-200">
+                  <p className="text-xs text-green-800 font-bold uppercase tracking-wide text-center mb-1">Payable Now</p>
+                  <p className="text-3xl font-black text-green-700 text-center">₹399</p>
+                  <p className="text-[10px] text-green-600 text-center font-medium uppercase tracking-tight">One-time Setup Fee</p>
+                </div>
+
                 <div className="space-y-4 text-left border-t border-green-100 pt-6">
                   <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> 1st Month Subscription <strong className="ml-2 text-green-700">FREE</strong></p>
-                  <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> <span className="opacity-50 line-through mr-1">₹299</span> Pays ₹0 for Month 1</p>
-                  <div className="mt-4 bg-green-50 p-3 rounded-xl text-xs text-center text-gray-500">
-                    Subscription (₹299/mo) starts from <strong>2nd Month</strong>
+                  <div className="mt-2 text-xs text-gray-400 text-center leading-tight">
+                    You only pay the setup fee today. Subscription charges start from next month.
                   </div>
                 </div>
               </div>
