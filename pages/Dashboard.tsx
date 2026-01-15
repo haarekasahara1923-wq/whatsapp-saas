@@ -148,6 +148,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+
         <div className="bg-green-600 p-8 md:p-10 rounded-[3rem] shadow-xl text-white">
           <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Inventory Summary</p>
           <h3 className="text-4xl font-black mb-1">{products.length} Products</h3>
@@ -155,6 +156,70 @@ const Dashboard: React.FC = () => {
           <Link to="/products/new" className="inline-block bg-white/20 hover:bg-white/30 px-6 py-3 rounded-2xl text-xs font-black uppercase backdrop-blur-md transition-all">Quick Add</Link>
         </div>
       </div>
+
+      {/* New Section: Logistics & Affiliate Programs */}
+      <div className="grid md:grid-cols-2 gap-8 mb-12">
+        {/* Shiprocket Section */}
+        <div className="bg-white border-2 border-gray-50 p-8 md:p-10 rounded-[3rem] shadow-sm flex flex-col items-start justify-between">
+          <div>
+            <h2 className="text-2xl font-black text-gray-900 mb-2">Logistics Partner 🚚</h2>
+            <p className="text-gray-500 text-sm font-medium mb-6 leading-relaxed">
+              Simplify your order fulfillment. Register with Shiprocket to handle shipping and delivery seamlessly.
+            </p>
+          </div>
+          <a
+            href="https://app.shiprocket.in/newlogin?utm_campaign=SR_NB_Delivery_Phrase_10_01_2023&utm_content=Transport&utm_term=transportation%20delivery%20services&utm_source=google&utm_medium=cpc&gad_source=1&gad_campaignid=19548990361&gbraid=0AAAAADl40lVMYYLZqZ2RGGQe736xLgy--&gclid=CjwKCAiAjojLBhAlEiwAcjhrDlYs4QH2ugs9mBKXUfo7HWvu0rb52RUI4-LREEPJGqNBx-vZP8eCwhoCFjgQAvD_BwE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full text-center bg-[#673de6] text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-[#5b36cc] transition-all shadow-lg shadow-indigo-100"
+          >
+            Register on Shiprocket
+          </a>
+        </div>
+
+        {/* Affiliate Programs Section */}
+        <div className="bg-white border-2 border-gray-50 p-8 md:p-10 rounded-[3rem] shadow-sm">
+          <h2 className="text-2xl font-black text-gray-900 mb-2">Join Affiliate Programs 💰</h2>
+          <p className="text-gray-500 text-sm font-medium mb-6 leading-relaxed">
+            Don't have your own products? Join these affiliate programs to source and sell trending items.
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href="https://affiliate-program.amazon.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#232F3E] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center justify-center hover:bg-gray-800 transition-all border-b-4 border-yellow-500"
+            >
+              Amazon
+            </a>
+            <a
+              href="https://affiliate.flipkart.com/registerme"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#2874F0] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center justify-center hover:bg-blue-600 transition-all border-b-4 border-yellow-400"
+            >
+              Flipkart
+            </a>
+            <a
+              href="https://creator.wishlink.com/?utm_source=GAds&utm_medium=WLQ_GA_WC_Search_BM_PR_SL&utm_campaign=search_ad_signup_page&utm_source=GAds&utm_medium=Search&utm_campaign=WLQ_GA_WC_Search_BM_PR_SL&gad_source=1&gad_campaignid=20924249488&gbraid=0AAAAAqtXM3LUen3RNrurFIk8_L_La939-&gclid=Cj0KCQiAo4TKBhDRARIsAGW29bfB4Ml-_R9Es3V_Sp9odfF52P79WNSrkHsNAXuSazVWNlM9Zx--oTUaApP4EALw_wcB"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#D434FE] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center justify-center hover:bg-purple-600 transition-all border-b-4 border-purple-800"
+            >
+              Wishlink
+            </a>
+            <a
+              href="https://affiliate.meesho.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#f43397] text-white px-4 py-3 rounded-xl font-bold text-xs uppercase flex items-center justify-center hover:bg-pink-600 transition-all border-b-4 border-pink-800"
+            >
+              Meesho
+            </a>
+          </div>
+        </div>
+      </div>
+
 
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <h2 className="text-3xl font-black text-gray-900 tracking-tight">Active Items</h2>
