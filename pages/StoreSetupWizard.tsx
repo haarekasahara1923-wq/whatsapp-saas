@@ -301,14 +301,14 @@ const StoreSetupWizard: React.FC = () => {
 
             {/* Dynamic Plan Display */}
             {(user as any)?.selectedPlan === 'yearly' ? (
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-10 rounded-3xl border-4 border-gray-700 relative max-w-sm mx-auto shadow-xl">
+              <div className="bg-gradient-to-br from-green-900 to-green-800 text-white p-10 rounded-3xl border-4 border-green-700 relative max-w-sm mx-auto shadow-xl">
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Yearly Deal</span>
                 <h4 className="text-6xl font-black mb-1">₹2399</h4>
-                <p className="text-xs text-gray-400 font-black uppercase tracking-widest mb-6 text-center">/year</p>
-                <div className="space-y-4 text-left border-t border-gray-700 pt-6">
-                  <p className="flex items-center text-sm font-bold text-gray-300"><span className="text-yellow-400 mr-3">✓</span> Setup Fee (₹399) <strong className="ml-2 text-white">WAIVED</strong></p>
-                  <p className="flex items-center text-sm font-bold text-gray-300"><span className="text-yellow-400 mr-3">✓</span> Save ₹1500+ Annually</p>
-                  <div className="mt-4 bg-gray-800 p-3 rounded-xl text-xs text-center text-gray-400">
+                <p className="text-xs text-green-200 font-black uppercase tracking-widest mb-6 text-center">/year</p>
+                <div className="space-y-4 text-left border-t border-green-700 pt-6">
+                  <p className="flex items-center text-sm font-bold text-green-100"><span className="text-yellow-400 mr-3">✓</span> Setup Fee (₹399) <strong className="ml-2 text-white">WAIVED</strong></p>
+                  <p className="flex items-center text-sm font-bold text-green-100"><span className="text-yellow-400 mr-3">✓</span> Save ₹1500+ Annually</p>
+                  <div className="mt-4 bg-green-800 p-3 rounded-xl text-xs text-center text-green-200">
                     Total Payable Now: <strong className="text-white text-lg">₹2399</strong>
                   </div>
                 </div>
@@ -353,7 +353,7 @@ const StoreSetupWizard: React.FC = () => {
                       email: user?.email,
                       contact: user?.whatsappNumber
                     },
-                    theme: { color: isYearly ? '#111827' : '#16a34a' }
+                    theme: { color: isYearly ? '#14532d' : '#16a34a' }
                   };
 
                   const script = document.createElement('script');
@@ -364,7 +364,7 @@ const StoreSetupWizard: React.FC = () => {
                   };
                   document.body.appendChild(script);
                 }}
-                className={`w-full text-white py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all hover:-translate-y-1 ${(user as any)?.selectedPlan === 'yearly' ? 'bg-gray-900 hover:bg-black' : 'bg-green-600 hover:bg-green-700'
+                className={`w-full text-white py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all hover:-translate-y-1 ${(user as any)?.selectedPlan === 'yearly' ? 'bg-green-800 hover:bg-green-900' : 'bg-green-600 hover:bg-green-700'
                   }`}
               >
                 Pay & Launch 🚀

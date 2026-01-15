@@ -100,31 +100,33 @@ const LandingPage: React.FC = () => {
               </Link>
             </div>
 
+
             {/* Yearly Plan */}
-            <div className="bg-gray-900 p-8 rounded-3xl text-white shadow-2xl relative transform md:-translate-y-4 border-4 border-gray-800 hover:border-gray-700 transition-all">
+            <div className="bg-green-900 p-8 rounded-3xl text-white shadow-2xl relative transform md:-translate-y-4 border-4 border-green-700 hover:border-green-600 transition-all">
               <div className="absolute top-0 right-0 bg-yellow-400 text-black px-4 py-1 rounded-bl-2xl rounded-tr-2xl text-xs font-bold uppercase tracking-wide">
                 Best Value
               </div>
-              <p className="text-gray-400 font-medium uppercase tracking-widest text-xs mb-4">Yearly Plan</p>
+              <p className="text-green-200 font-medium uppercase tracking-widest text-xs mb-4">Yearly Plan</p>
               <div className="flex items-baseline mb-2">
                 <h3 className="text-5xl font-black">₹2399</h3>
-                <span className="text-gray-400 ml-2 font-medium">/year</span>
+                <span className="text-green-200 ml-2 font-medium">/year</span>
               </div>
               <p className="text-yellow-400 font-bold text-sm mb-6 flex items-center">
                 <span className="bg-white/10 p-1 rounded mr-2">🚀</span>
                 Setup Charge (₹399) WAIVED!
               </p>
 
-              <ul className="space-y-4 mb-8 text-sm text-gray-300">
+              <ul className="space-y-4 mb-8 text-sm text-green-100">
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> <span className="line-through opacity-60 mr-2">Setup Charge: ₹399</span> <strong>FREE</strong></li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Pay only <strong className="ml-1 text-white">₹2399/year</strong></li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Save <strong className="ml-1 text-white">₹1500+</strong> annually</li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Priority Support</li>
               </ul>
-              <Link to="/register?plan=yearly" className="block w-full bg-white text-gray-900 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-white/20 text-center uppercase tracking-widest">
+              <Link to="/register?plan=yearly" className="block w-full bg-white text-green-900 py-4 rounded-xl font-bold hover:bg-green-50 transition-all shadow-lg hover:shadow-white/20 text-center uppercase tracking-widest">
                 Get Yearly Deal
               </Link>
             </div>
+
 
           </div>
         </div>
