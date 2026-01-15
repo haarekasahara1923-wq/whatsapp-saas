@@ -71,53 +71,57 @@ const LandingPage: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
 
             {/* Monthly Plan */}
-            <div className="bg-white p-8 rounded-3xl border-2 border-green-50 shadow-xl hover:border-green-200 transition-all relative">
-              <div className="absolute top-0 right-0 bg-green-100 text-green-700 px-4 py-1 rounded-bl-2xl rounded-tr-2xl text-xs font-bold uppercase tracking-wide">
+            <div className="bg-[#e6fcf5] p-8 rounded-3xl border border-green-200 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative group cursor-pointer">
+              <div className="absolute top-0 right-0 bg-green-600 text-white px-4 py-1 rounded-bl-2xl rounded-tr-2xl text-xs font-bold uppercase tracking-wide">
                 Best for Starters
               </div>
-              <p className="text-gray-500 font-medium uppercase tracking-widest text-xs mb-4">Monthly Plan</p>
-              <div className="flex items-baseline mb-2">
-                <h3 className="text-4xl font-black">₹399</h3>
-                <span className="text-gray-500 ml-2 font-medium">One-time Setup</span>
+              <p className="text-green-800 font-bold uppercase tracking-widest text-xs mb-4">Monthly Plan</p>
+              <div className="flex items-baseline mb-1">
+                <h3 className="text-5xl font-black text-gray-900">₹299</h3>
+                <span className="text-gray-500 ml-2 font-medium">/month</span>
               </div>
-              <p className="text-green-600 font-bold text-sm mb-6 flex items-center">
-                <span className="bg-green-100 p-1 rounded mr-2">🎁</span>
-                1st Month Subscription WAIVED!
-              </p>
+              <p className="text-xs text-gray-500 font-semibold mb-2 ml-1">Starts from 2nd Month</p>
 
-              <ul className="space-y-4 mb-8 text-sm text-gray-600">
-                <li className="flex items-center"><span className="text-green-500 mr-2 text-lg">✓</span> Setup Charge: <strong className="ml-1 text-gray-900">₹399</strong> (Single Time)</li>
-                <li className="flex items-center"><span className="text-green-500 mr-2 text-lg">✓</span> Monthly Subscription: <strong className="ml-1 text-gray-900">₹299/mo</strong></li>
-                <li className="flex items-center"><span className="text-green-500 mr-2 text-lg">✓</span> Subscription payable from <strong className="ml-1 text-gray-900">2nd Month</strong></li>
-                <li className="flex items-center"><span className="text-green-500 mr-2 text-lg">✓</span> Unlimited Products & Orders</li>
+              <div className="bg-white/80 p-3 rounded-xl mb-6 border border-green-100">
+                <p className="text-green-700 font-bold text-sm flex items-center">
+                  <span className="bg-green-100 p-1 rounded mr-2">🎁</span>
+                  1st Month Subscription FREE!
+                </p>
+                <p className="text-gray-600 text-xs mt-1 ml-8">Pay only <strong>₹399</strong> (Setup Charge) today.</p>
+              </div>
+
+              <ul className="space-y-4 mb-8 text-sm text-gray-700 font-medium">
+                <li className="flex items-center"><span className="text-green-600 mr-2 text-lg">✓</span> Setup Charge: <strong className="ml-1 text-gray-900">₹399</strong> (One-time)</li>
+                <li className="flex items-center"><span className="text-green-600 mr-2 text-lg">✓</span> Subscription: <strong className="ml-1 text-gray-900">₹299/mo</strong> (from 2nd Mo.)</li>
+                <li className="flex items-center"><span className="text-green-600 mr-2 text-lg">✓</span> Unlimited Products & Orders</li>
               </ul>
-              <Link to="/register" className="block w-full bg-white border-2 border-green-600 text-green-600 py-3 rounded-xl font-bold hover:bg-green-50 transition-all text-center">
+              <Link to="/register?plan=monthly" className="block w-full bg-green-600 border-2 border-green-600 text-white py-4 rounded-xl font-bold hover:bg-green-700 transition-all text-center shadow-lg uppercase tracking-widest">
                 Start Monthly
               </Link>
             </div>
 
             {/* Yearly Plan */}
-            <div className="bg-green-900 p-8 rounded-3xl text-white shadow-2xl relative transform md:-translate-y-4 border-4 border-green-400">
+            <div className="bg-gray-900 p-8 rounded-3xl text-white shadow-2xl relative transform md:-translate-y-4 border-4 border-gray-800 hover:border-gray-700 transition-all">
               <div className="absolute top-0 right-0 bg-yellow-400 text-black px-4 py-1 rounded-bl-2xl rounded-tr-2xl text-xs font-bold uppercase tracking-wide">
                 Best Value
               </div>
-              <p className="text-green-200 font-medium uppercase tracking-widest text-xs mb-4">Yearly Plan</p>
+              <p className="text-gray-400 font-medium uppercase tracking-widest text-xs mb-4">Yearly Plan</p>
               <div className="flex items-baseline mb-2">
                 <h3 className="text-5xl font-black">₹2399</h3>
-                <span className="text-green-200 ml-2 font-medium">/year</span>
+                <span className="text-gray-400 ml-2 font-medium">/year</span>
               </div>
               <p className="text-yellow-400 font-bold text-sm mb-6 flex items-center">
                 <span className="bg-white/10 p-1 rounded mr-2">🚀</span>
                 Setup Charge (₹399) WAIVED!
               </p>
 
-              <ul className="space-y-4 mb-8 text-sm text-green-100">
+              <ul className="space-y-4 mb-8 text-sm text-gray-300">
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> <span className="line-through opacity-60 mr-2">Setup Charge: ₹399</span> <strong>FREE</strong></li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Pay only <strong className="ml-1 text-white">₹2399/year</strong></li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Save <strong className="ml-1 text-white">₹1500+</strong> annually</li>
                 <li className="flex items-center"><span className="text-yellow-400 mr-2 text-lg">✓</span> Priority Support</li>
               </ul>
-              <Link to="/register" className="block w-full bg-green-500 text-white py-4 rounded-xl font-bold hover:bg-green-400 transition-all shadow-lg hover:shadow-green-500/50 text-center">
+              <Link to="/register?plan=yearly" className="block w-full bg-white text-gray-900 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-white/20 text-center uppercase tracking-widest">
                 Get Yearly Deal
               </Link>
             </div>
@@ -125,6 +129,7 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
 
     </div>
   );

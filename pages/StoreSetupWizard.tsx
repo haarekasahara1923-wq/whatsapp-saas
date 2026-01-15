@@ -290,31 +290,89 @@ const StoreSetupWizard: React.FC = () => {
           </div>
         )}
 
+
         {step === 4 && (
           <div className="space-y-8 py-10 text-center animate-in zoom-in duration-500">
             <div>
               <div className="text-6xl mb-6">🚀</div>
               <h2 className="text-4xl font-black">Ready to Launch?</h2>
-              <p className="text-gray-500 font-medium mt-2 text-center">One-time activation for your lifetime store access.</p>
+              <p className="text-gray-500 font-medium mt-2 text-center">Complete setup to activate your store.</p>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-white p-10 rounded-3xl border-2 border-green-100 relative max-w-sm mx-auto shadow-xl">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Special Offer</span>
-              <h4 className="text-6xl font-black text-gray-900 mb-1">₹399</h4>
-              <p className="text-xs text-green-700 font-black uppercase tracking-widest mb-6 text-center">Activation Fee</p>
-              <div className="space-y-4 text-left">
-                <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> 1st Month Subscription Free</p>
-                <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> AI Marketing Tools Included</p>
+            {/* Dynamic Plan Display */}
+            {(user as any)?.selectedPlan === 'yearly' ? (
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white p-10 rounded-3xl border-4 border-gray-700 relative max-w-sm mx-auto shadow-xl">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Yearly Deal</span>
+                <h4 className="text-6xl font-black mb-1">₹2399</h4>
+                <p className="text-xs text-gray-400 font-black uppercase tracking-widest mb-6 text-center">/year</p>
+                <div className="space-y-4 text-left border-t border-gray-700 pt-6">
+                  <p className="flex items-center text-sm font-bold text-gray-300"><span className="text-yellow-400 mr-3">✓</span> Setup Fee (₹399) <strong className="ml-2 text-white">WAIVED</strong></p>
+                  <p className="flex items-center text-sm font-bold text-gray-300"><span className="text-yellow-400 mr-3">✓</span> Save ₹1500+ Annually</p>
+                  <div className="mt-4 bg-gray-800 p-3 rounded-xl text-xs text-center text-gray-400">
+                    Total Payable Now: <strong className="text-white text-lg">₹2399</strong>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-gradient-to-br from-green-50 to-white p-10 rounded-3xl border-2 border-green-100 relative max-w-sm mx-auto shadow-xl">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Starter Offer</span>
+                <h4 className="text-6xl font-black text-gray-900 mb-1">₹399</h4>
+                <p className="text-xs text-green-700 font-black uppercase tracking-widest mb-6 text-center">One-time Setup Fee</p>
+                <div className="space-y-4 text-left border-t border-green-100 pt-6">
+                  <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> 1st Month Subscription <strong className="ml-2 text-green-700">FREE</strong></p>
+                  <p className="flex items-center text-sm font-bold text-gray-600"><span className="text-green-500 mr-3">✓</span> <span className="opacity-50 line-through mr-1">₹299</span> Pays ₹0 for Month 1</p>
+                  <div className="mt-4 bg-green-50 p-3 rounded-xl text-xs text-center text-gray-500">
+                    Subscription (₹299/mo) starts from <strong>2nd Month</strong>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4 max-w-sm mx-auto">
-              <button onClick={handlePayment} className="w-full bg-green-600 text-white py-6 rounded-2xl font-black text-2xl hover:bg-green-700 shadow-2xl transition-all hover:-translate-y-1">
-                Launch My Store
+              <button
+                onClick={() => {
+                  const isYearly = (user as any)?.selectedPlan === 'yearly';
+                  // Payment Logic: 399 for Monthly (Setup Only), 2399 for Yearly (Sub Only)
+                  const amount = isYearly ? 239900 : 39900;
+                  const description = isYearly ? 'Yearly Subscription' : 'Store Setup Fee';
+
+                  const options = {
+                    key: 'rzp_live_RsbFKZwt1ZtSQF',
+                    amount: amount,
+                    currency: 'INR',
+                    name: 'WS-Store SaaS',
+                    description: description,
+                    handler: function (response: any) {
+                      if (response.razorpay_payment_id) {
+                        saveDraftStore(true);
+                        navigate('/dashboard');
+                      }
+                    },
+                    prefill: {
+                      name: user?.name,
+                      email: user?.email,
+                      contact: user?.whatsappNumber
+                    },
+                    theme: { color: isYearly ? '#111827' : '#16a34a' }
+                  };
+
+                  const script = document.createElement('script');
+                  script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                  script.onload = () => {
+                    const rzp = new (window as any).Razorpay(options);
+                    rzp.open();
+                  };
+                  document.body.appendChild(script);
+                }}
+                className={`w-full text-white py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all hover:-translate-y-1 ${(user as any)?.selectedPlan === 'yearly' ? 'bg-gray-900 hover:bg-black' : 'bg-green-600 hover:bg-green-700'
+                  }`}
+              >
+                Pay & Launch 🚀
               </button>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
