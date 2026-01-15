@@ -21,11 +21,12 @@ export interface User {
   email: string;
   whatsappNumber: string;
   storeName: string;
-  storeSlug: string; 
+  storeSlug: string;
   address: string;
   role: UserRole;
   password?: string;
   createdAt: string;
+  selectedPlan?: string;
 }
 
 export interface SocialLinks {

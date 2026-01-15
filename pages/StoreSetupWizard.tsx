@@ -20,7 +20,7 @@ const StoreSetupWizard: React.FC = () => {
     logoUrl: '',
     bannerUrl: '',
     bio: '',
-    plan: PRICING_PLANS[0].id,
+    plan: (user as any)?.selectedPlan || 'monthly',
     socialLinks: {} as SocialLinks
   });
 
@@ -299,8 +299,26 @@ const StoreSetupWizard: React.FC = () => {
               <p className="text-gray-500 font-medium mt-2 text-center">Complete setup to activate your store.</p>
             </div>
 
+            {/* Plan Toggle */}
+            <div className="flex justify-center mb-6">
+              <div className="bg-gray-100 p-1 rounded-xl flex items-center">
+                <button
+                  onClick={() => setFormData({ ...formData, plan: 'monthly' })}
+                  className={`px-6 py-2 rounded-lg text-sm font-black transition-all ${formData.plan === 'monthly' ? 'bg-white text-green-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setFormData({ ...formData, plan: 'yearly' })}
+                  className={`px-6 py-2 rounded-lg text-sm font-black transition-all ${formData.plan === 'yearly' ? 'bg-green-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  Yearly
+                </button>
+              </div>
+            </div>
+
             {/* Dynamic Plan Display */}
-            {(user as any)?.selectedPlan === 'yearly' ? (
+            {formData.plan === 'yearly' ? (
               <div className="bg-gradient-to-br from-green-900 to-green-800 text-white p-10 rounded-3xl border-4 border-green-700 relative max-w-sm mx-auto shadow-xl">
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-black text-[10px] font-black uppercase tracking-widest px-4 py-1 rounded-full shadow-lg">Yearly Deal</span>
                 <h4 className="text-6xl font-black mb-1">₹2399</h4>
@@ -331,7 +349,7 @@ const StoreSetupWizard: React.FC = () => {
             <div className="space-y-4 max-w-sm mx-auto">
               <button
                 onClick={() => {
-                  const isYearly = (user as any)?.selectedPlan === 'yearly';
+                  const isYearly = formData.plan === 'yearly';
                   // Payment Logic: 399 for Monthly (Setup Only), 2399 for Yearly (Sub Only)
                   const amount = isYearly ? 239900 : 39900;
                   const description = isYearly ? 'Yearly Subscription' : 'Store Setup Fee';
@@ -364,7 +382,7 @@ const StoreSetupWizard: React.FC = () => {
                   };
                   document.body.appendChild(script);
                 }}
-                className={`w-full text-white py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all hover:-translate-y-1 ${(user as any)?.selectedPlan === 'yearly' ? 'bg-green-800 hover:bg-green-900' : 'bg-green-600 hover:bg-green-700'
+                className={`w-full text-white py-6 rounded-2xl font-black text-2xl shadow-2xl transition-all hover:-translate-y-1 ${formData.plan === 'yearly' ? 'bg-green-800 hover:bg-green-900' : 'bg-green-600 hover:bg-green-700'
                   }`}
               >
                 Pay & Launch 🚀
