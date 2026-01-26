@@ -317,17 +317,17 @@ const PublicStore: React.FC = () => {
         <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-all duration-500" onClick={() => setSearchParams({})} />
           <div className={`relative bg-white w-full max-w-5xl md:max-h-[90vh] overflow-y-auto rounded-t-3xl md:${config.borderRadius} shadow-2xl flex flex-col md:flex-row animate-in slide-in-from-bottom-20 duration-500`}>
-            
-             <div className="absolute top-4 right-4 z-[110] flex space-x-3">
-              <button 
-                onClick={handleShareProduct} 
+
+            <div className="absolute top-4 right-4 z-[110] flex space-x-3">
+              <button
+                onClick={handleShareProduct}
                 className="bg-white/80 backdrop-blur-md text-gray-900 w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all active:scale-95"
                 title="Copy Link"
               >
                 {isCopied ? <Check size={20} className="text-green-600" /> : <Share2 size={20} />}
               </button>
-              <button 
-                onClick={() => setSearchParams({})} 
+              <button
+                onClick={() => setSearchParams({})}
                 className="bg-white/80 backdrop-blur-md text-gray-900 w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all active:scale-95 font-black"
               >
                 ✕
